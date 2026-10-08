@@ -13,14 +13,12 @@ mensais (37 municípios, 20 estados, 5 regiões).
 
 | Recurso | Link |
 |---|---|
-| Repositório GitHub | `https://github.com/<seu-usuario>/projeto-dengue-brasil` |
-| Página do projeto (GitHub Pages) | `https://<seu-usuario>.github.io/projeto-dengue-brasil/` |
-| Dashboard (Streamlit Community Cloud) | `https://<seu-usuario>-projeto-dengue-brasil.streamlit.app` |
+| Repositório GitHub | `https://github.com/RAPHAELCCORTES/projeto-dengue-brasil` |
+| Página do projeto (GitHub Pages) | `https://raphaelccortes.github.io/projeto-dengue-brasil/` |
+| Dashboard (Streamlit Community Cloud) | `https://projeto-dengue-brasil.streamlit.app/` |
 | Notebook de análise | [`notebooks/analise_dengue.ipynb`](notebooks/analise_dengue.ipynb) |
 | Base de dados | [`dados/simulacao_dengue_brasil.csv`](dados/simulacao_dengue_brasil.csv) |
 
-> ⚠️ Substitua os três links acima pelos links reais assim que publicar o repositório, o
-> GitHub Pages e o deploy do Streamlit (veja o passo a passo no final deste arquivo).
 
 ## 🎯 Objetivo
 
@@ -137,31 +135,6 @@ Detalhes completos da análise, incluindo todos os gráficos, estão no notebook
 
 ## 🚀 Publicação (passo a passo)
 
-### 1. GitHub (código-fonte)
-```bash
-cd projeto-dengue-brasil
-git init
-git add .
-git commit -m "Projeto G1 - Evolução dos casos de dengue no Brasil"
-git branch -M main
-git remote add origin https://github.com/<seu-usuario>/projeto-dengue-brasil.git
-git push -u origin main
-```
-
-### 2. GitHub Pages (página do projeto)
-No repositório, vá em **Settings → Pages** → em "Branch" selecione `main` e a pasta `/root`
-→ salve. A página ficará disponível em
-`https://<seu-usuario>.github.io/projeto-dengue-brasil/` (o GitHub Pages publica
-automaticamente o `index.html`).
-
-### 3. Streamlit Community Cloud (dashboard)
-Acesse [share.streamlit.io](https://share.streamlit.io), conecte sua conta do GitHub,
-selecione o repositório `projeto-dengue-brasil`, informe `app.py` como arquivo principal e
-clique em **Deploy**. Depois de publicado, copie o link gerado.
-
-### 4. Atualize os links
-Depois de publicar, volte neste `README.md` e no `index.html` e substitua os links de
-exemplo pelos links reais do seu repositório, da página e do dashboard.
 
 ---
 Projeto desenvolvido para fins educacionais — Linguagem de Programação: Análise e
