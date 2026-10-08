@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Evolução dos Casos de Dengue no Brasil — Projeto G1</title>
+<meta name="description" content="Projeto de análise e visualização de dados com Python sobre a evolução dos casos de dengue no Brasil (2015-2024)." />
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --text: #1f2430;
+    --text-muted: #5b6270;
+    --accent: #c0392b;
+    --accent-2: #8e44ad;
+    --accent-3: #2980b9;
+    --border: #e4e2dd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15171c;
+      --surface: #1d2027;
+      --text: #ecebe8;
+      --text-muted: #a7acb8;
+      --accent: #e5756a;
+      --accent-2: #c48ee0;
+      --accent-3: #6fb0e0;
+      --border: #30333c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15171c;
+    --surface: #1d2027;
+    --text: #ecebe8;
+    --text-muted: #a7acb8;
+    --accent: #e5756a;
+    --accent-2: #c48ee0;
+    --accent-3: #6fb0e0;
+    --border: #30333c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+  header.hero {
+    padding: 56px 0 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: clamp(28px, 4.5vw, 42px);
+    margin: 0 0 14px;
+    line-height: 1.15;
+  }
+  .subtitle { color: var(--text-muted); font-size: 16px; max-width: 70ch; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 8px 18px;
+    margin-top: 18px; font-size: 14px; color: var(--text-muted);
+  }
+  .meta-row strong { color: var(--text); }
+  section { padding: 40px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h2 {
+    font-size: 22px; margin: 0 0 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2 .dot {
+    width: 10px; height: 10px; border-radius: 50%; background: var(--accent); display: inline-block;
+  }
+  p { color: var(--text); }
+  ul.plain { padding-left: 20px; margin: 0; }
+  ul.plain li { margin-bottom: 8px; }
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px; margin-top: 10px;
+  }
+  .kpi-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .kpi-card .label { font-size: 12.5px; color: var(--text-muted); margin-bottom: 6px; }
+  .kpi-card .value { font-size: 22px; font-weight: 700; }
+  .findings-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin-top: 14px;
+  }
+  .finding { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .finding .label { font-size: 12.5px; color: var(--text-muted); }
+  .finding .value { font-size: 17px; font-weight: 700; margin-top: 4px; }
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .pill {
+    border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px;
+    font-size: 13.5px; background: var(--surface); color: var(--text-muted);
+  }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 16px; }
+  .gallery figure { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .gallery img { width: 100%; display: block; }
+  .gallery figcaption { padding: 10px 14px; font-size: 13.5px; color: var(--text-muted); }
+  .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; }
+  a.link-card {
+    display: block; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px;
+    background: var(--surface); color: var(--text); text-decoration: none;
+  }
+  a.link-card:hover { border-color: var(--accent); }
+  a.link-card .link-title { font-weight: 700; margin-bottom: 4px; }
+  a.link-card .link-sub { font-size: 13px; color: var(--text-muted); }
+  footer { padding: 30px 0 50px; color: var(--text-muted); font-size: 13.5px; }
+  code { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-size: 13px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="eyebrow">Projeto G1 · Tema 1</div>
+      <h1>🦟 Evolução dos Casos de Dengue no Brasil</h1>
+      <p class="subtitle">
+        Projeto de análise e visualização de dados com Python (2015–2024), explorando
+        padrões temporais e regionais dos casos de dengue em 37 municípios brasileiros para
+        apoiar ações de vigilância epidemiológica.
+      </p>
+      <div class="meta-row">
+        <span>Disciplina: <strong>Linguagem de Programação — Análise e Visualização de Dados com Python</strong></span>
+        <span>Professor: <strong>Alexandre Neves Louzada</strong></span>
+        <span>Aluno: <strong>Raphael Cortes</strong></span>
+      </div>
+    </header>
+
+    <section id="sobre">
+      <h2><span class="dot"></span>Sobre o projeto</h2>
+      <p>
+        A dengue é uma das principais doenças transmitidas por mosquitos no Brasil e
+        representa um importante problema de saúde pública. A proliferação do mosquito
+        <em>Aedes aegypti</em> está relacionada a fatores climáticos, ambientais e urbanos,
+        especialmente períodos de chuva intensa e temperaturas elevadas.
+      </p>
+      <p>
+        Este projeto desenvolve uma aplicação analítica completa — da leitura e limpeza dos
+        dados à engenharia de atributos, cálculo de KPIs, visualizações e um dashboard
+        interativo — para investigar a evolução dos casos de dengue no Brasil entre 2015 e
+        2024, identificar regiões e períodos mais críticos e apoiar decisões de saúde
+        pública.
+      </p>
+    </section>
+
+    <section id="perguntas">
+      <h2><span class="dot"></span>Perguntas de negócio</h2>
+      <ul class="plain">
+        <li>Quais estados apresentam mais casos de dengue?</li>
+        <li>Existem períodos do ano mais críticos?</li>
+        <li>Há crescimento dos casos ao longo dos anos?</li>
+        <li>Existe relação entre chuva e aumento de casos?</li>
+        <li>Quais municípios apresentam maior incidência?</li>
+        <li>Há regiões mais vulneráveis?</li>
+        <li>Quais períodos exigem maior atenção da saúde pública?</li>
+      </ul>
+    </section>
+
+    <section id="kpis">
+      <h2><span class="dot"></span>Indicadores analisados (KPIs)</h2>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="label">Total de casos</div><div class="value">Soma total de casos registrados</div></div>
+        <div class="kpi-card"><div class="label">Total de óbitos</div><div class="value">Soma total de óbitos</div></div>
+        <div class="kpi-card"><div class="label">Média mensal de casos</div><div class="value">Média de casos por mês</div></div>
+        <div class="kpi-card"><div class="label">Estado mais afetado</div><div class="value">Ranking por UF</div></div>
+        <div class="kpi-card"><div class="label">Município crítico</div><div class="value">Maior incidência média</div></div>
+        <div class="kpi-card"><div class="label">Incidência média</div><div class="value">Casos por 100 mil hab.</div></div>
+      </div>
+
+      <h3 style="margin-top:28px; font-size:16px;">Principais achados (visão geral 2015–2024)</h3>
+      <div class="findings-grid">
+        <div class="finding"><div class="label">Total de casos</div><div class="value">3.560.562</div></div>
+        <div class="finding"><div class="label">Total de óbitos</div><div class="value">5.314</div></div>
+        <div class="finding"><div class="label">Estado mais afetado</div><div class="value">RJ</div></div>
+        <div class="finding"><div class="label">Região mais afetada</div><div class="value">Sudeste</div></div>
+        <div class="finding"><div class="label">Município crítico</div><div class="value">Campinas</div></div>
+        <div class="finding"><div class="label">Correlação chuva x casos</div><div class="value">≈ 0,29</div></div>
+      </div>
+    </section>
+
+    <section id="graficos">
+      <h2><span class="dot"></span>Visualizações</h2>
+      <div class="gallery">
+        <figure>
+          <img src="imagens/evolucao_anual.png" alt="Evolução anual dos casos de dengue" loading="lazy" />
+          <figcaption>Evolução anual dos casos de dengue no Brasil</figcaption>
+        </figure>
+        <figure>
+          <img src="imagens/casos_por_uf.png" alt="Total de casos por estado" loading="lazy" />
+          <figcaption>Total de casos por estado (UF)</figcaption>
+        </figure>
+        <figure>
+          <img src="imagens/heatmap_sazonalidade.png" alt="Heatmap de sazonalidade mensal" loading="lazy" />
+          <figcaption>Sazonalidade dos casos (mês x ano)</figcaption>
+        </figure>
+        <figure>
+          <img src="imagens/dispersao_chuva_casos.png" alt="Dispersão entre chuva e casos de dengue" loading="lazy" />
+          <figcaption>Relação entre chuva e casos de dengue</figcaption>
+        </figure>
+        <figure>
+          <img src="imagens/top10_municipios.png" alt="Top 10 municípios por incidência" loading="lazy" />
+          <figcaption>Top 10 municípios por incidência média</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="tecnologias">
+      <h2><span class="dot"></span>Tecnologias utilizadas</h2>
+      <div class="tech-pills">
+        <span class="pill">Python</span>
+        <span class="pill">Pandas</span>
+        <span class="pill">Matplotlib</span>
+        <span class="pill">Seaborn</span>
+        <span class="pill">Streamlit</span>
+        <span class="pill">Plotly</span>
+        <span class="pill">SQLAlchemy</span>
+        <span class="pill">SQLite</span>
+        <span class="pill">GitHub</span>
+        <span class="pill">GitHub Pages</span>
+      </div>
+    </section>
+
+    <section id="arquivos">
+      <h2><span class="dot"></span>Arquivos do projeto</h2>
+      <div class="links-grid">
+        <a class="link-card" href="README.md">
+          <div class="link-title">📄 README</div>
+          <div class="link-sub">Documentação completa do projeto</div>
+        </a>
+        <a class="link-card" href="notebooks/analise_dengue.ipynb">
+          <div class="link-title">📓 Notebook de análise</div>
+          <div class="link-sub">analise_dengue.ipynb</div>
+        </a>
+        <a class="link-card" href="dados/simulacao_dengue_brasil.csv">
+          <div class="link-title">🗃️ Base de dados</div>
+          <div class="link-sub">simulacao_dengue_brasil.csv</div>
+        </a>
+      </div>
+    </section>
+
+    <section id="dashboard">
+      <h2><span class="dot"></span>Dashboard interativo</h2>
+      <p>
+        O dashboard em Streamlit permite explorar os dados com filtros por ano, mês,
+        região, estado, município e nível de alerta, além de KPIs dinâmicos, gráficos,
+        mapa interativo e tabela dinâmica.
+      </p>
+      <div class="links-grid">
+        <a class="link-card" href="https://share.streamlit.io" target="_blank" rel="noopener">
+          <div class="link-title">📊 Abrir dashboard</div>
+          <div class="link-sub">Substitua este link pelo link do seu app no Streamlit Community Cloud</div>
+        </a>
+        <a class="link-card" href="https://github.com/" target="_blank" rel="noopener">
+          <div class="link-title">💻 Repositório no GitHub</div>
+          <div class="link-sub">Substitua este link pelo link do seu repositório</div>
+        </a>
+      </div>
+    </section>
+
+    <section id="objetivo-pedagogico">
+      <h2><span class="dot"></span>Objetivo pedagógico</h2>
+      <p>
+        Mais importante do que gerar gráficos é interpretar os dados, responder perguntas
+        relevantes, identificar padrões, comunicar resultados de forma clara e desenvolver
+        um projeto profissional de análise de dados — do tratamento da base à publicação
+        online do código, da página e do dashboard.
+      </p>
+    </section>
+
+    <footer>
+      Projeto desenvolvido para fins educacionais — Linguagem de Programação: Análise e
+      Visualização de Dados com Python · Professor Alexandre Neves Louzada · Aluno Raphael Cortes.
+    </footer>
+  </div>
+</body>
+</html>
